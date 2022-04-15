@@ -9,9 +9,9 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/nikitamirzani323/wl_api_master/entities"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
-	"github.com/nikitamirzani323/wl_api_master/models"
+	"github.com/nikitamirzani323/wl_apisuper/entities"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
 const Fieldgame_home_redis = "LISTGAME_BACKEND_ISBPANEL"

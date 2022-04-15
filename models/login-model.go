@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_api_master/configs"
-	"github.com/nikitamirzani323/wl_api_master/db"
-	"github.com/nikitamirzani323/wl_api_master/entities"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/configs"
+	"github.com/nikitamirzani323/wl_apisuper/db"
+	"github.com/nikitamirzani323/wl_apisuper/entities"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
 	"github.com/nleeper/goment"
 )
 

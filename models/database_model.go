@@ -6,9 +6,9 @@ import (
 	"log"
 	"strings"
 
-	"github.com/nikitamirzani323/wl_api_master/configs"
-	"github.com/nikitamirzani323/wl_api_master/db"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/configs"
+	"github.com/nikitamirzani323/wl_apisuper/db"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
 )
 
 func Get_counter(field_column string) int {

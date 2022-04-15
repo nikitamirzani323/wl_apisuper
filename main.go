@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/nikitamirzani323/wl_api_master/db"
-	"github.com/nikitamirzani323/wl_api_master/routers"
+	"github.com/nikitamirzani323/wl_apisuper/db"
+	"github.com/nikitamirzani323/wl_apisuper/routers"
 )
 
 func main() {

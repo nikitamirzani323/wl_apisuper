@@ -10,7 +10,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
 )
 
 var db *sql.DB
