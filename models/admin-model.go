@@ -142,6 +142,14 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 				flag = true
 				msg = "Succes"
 				log.Println(msg_insert)
+
+				notelog := ""
+				notelog += "NEW ADMIN <br>"
+				notelog += "USERNAME : " + username + " <br>"
+				notelog += "RULE : " + rule + " <br>"
+				notelog += "NAME : " + nama + " <br>"
+				notelog += "STATUS : " + status
+				Insert_log("SUPERADMIN", "", admin, "ADMIN", "INSERT", notelog)
 			} else {
 				log.Println(msg_insert)
 			}
@@ -166,6 +174,14 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 				flag = true
 				msg = "Succes"
 				log.Println(msg_update)
+
+				notelog := ""
+				notelog += "UPDATE ADMIN <br>"
+				notelog += "USERNAME : " + username + " <br>"
+				notelog += "RULE : " + rule + " <br>"
+				notelog += "NAME : " + nama + " <br>"
+				notelog += "STATUS : " + status
+				Insert_log("SUPERADMIN", "", admin, "ADMIN", "UPDATE", notelog)
 			} else {
 				log.Println(msg_update)
 			}
@@ -191,6 +207,14 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 				flag = true
 				msg = "Succes"
 				log.Println(msg_update)
+
+				notelog := ""
+				notelog += "UPDATE ADMIN <br>"
+				notelog += "USERNAME : " + username + " <br>"
+				notelog += "RULE : " + rule + " <br>"
+				notelog += "NAME : " + nama + " <br>"
+				notelog += "STATUS : " + status
+				Insert_log("SUPERADMIN", "", admin, "ADMIN", "UPDATE", notelog)
 			} else {
 				log.Println(msg_update)
 			}

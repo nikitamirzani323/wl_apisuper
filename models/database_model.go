@@ -4,11 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/nikitamirzani323/wl_apisuper/configs"
 	"github.com/nikitamirzani323/wl_apisuper/db"
 	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nleeper/goment"
 )
 
 func Get_counter(field_column string) int {
@@ -179,4 +181,32 @@ func Exec_SQL(sql, table, action string, args ...interface{}) (bool, string) {
 		msg = "Data " + table + " Failed di " + action
 	}
 	return flag, msg
+}
+func Insert_log(typeuser, idcompany, username, page, tipe, note string) {
+	tglnow, _ := goment.New()
+	sql_insert := `
+		INSERT INTO 
+		` + configs.DB_tbl_trx_log + ` (
+			idlog, yearlog, 
+			typeuser, company, userlog, pagelog, tipelog, notelog
+		) VALUES (
+			$1, $2, 
+			$3, $4, $5, $6, $7, $8 
+		)
+	`
+
+	year := tglnow.Format("YYYY")
+	month := tglnow.Format("MM")
+	field_col := configs.DB_tbl_trx_log + year + month
+	idlog_counter := Get_counter(field_col)
+	idlog := tglnow.Format("YY") + tglnow.Format("MM") + tglnow.Format("DD") + tglnow.Format("HH") + strconv.Itoa(idlog_counter)
+	flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_trx_log, "INSERT",
+		idlog, year,
+		typeuser, idcompany, username, page, tipe, note)
+	if flag_insert {
+		log.Println(msg_insert)
+	} else {
+		log.Println(msg_insert)
+	}
+
 }

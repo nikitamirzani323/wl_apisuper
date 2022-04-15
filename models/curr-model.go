@@ -92,32 +92,16 @@ func Save_currHome(admin, idcurr, nama, sData string) (helpers.Response, error) 
 				flag = true
 				msg = "Succes"
 				log.Println(msg_insert)
+
+				notelog := ""
+				notelog += "NEW CURRENCY <br>"
+				notelog += "CURRENCRY : " + idcurr
+				Insert_log("SUPERADMIN", "", admin, "CURRENCY", "INSERT", notelog)
 			} else {
 				log.Println(msg_insert)
 			}
 		} else {
 			msg = "Duplicate Entry"
-		}
-	} else {
-		sql_update2 := `
-			UPDATE 
-			` + configs.DB_tbl_mst_currency + `   
-			SET idcurr =$1,  
-			updatecurr=$2, updatedatecurr=$3 
-			WHERE idcurr =$4 
-		`
-		flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_currency, "UPDATE",
-			nama,
-			admin,
-			tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-			idcurr)
-
-		if flag_update {
-			flag = true
-			msg = "Succes"
-			log.Println(msg_update)
-		} else {
-			log.Println(msg_update)
 		}
 	}
 

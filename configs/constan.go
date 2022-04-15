@@ -7,16 +7,7 @@ const (
 	DB_tbl_mst_currency      string = "tbl_mst_currency"
 	DB_tbl_mst_company       string = "tbl_mst_company"
 	DB_tbl_mst_company_admin string = "tbl_mst_company_admin"
-	DB_tbl_mst_websiteagen   string = "tbl_mst_websiteagen"
-	DB_tbl_mst_game          string = "tbl_mst_game"
-	DB_tbl_mst_domain        string = "tbl_mst_domain"
-	DB_tbl_mst_version       string = "tbl_mst_version"
-	DB_tbl_mst_category      string = "tbl_mst_categorynews"
-
-	STATUS_NEW      string = "background:#0dcaf0;font-weight:bold;color:black;"
-	STATUS_RUNNING  string = "background:#FFEB3B;font-weight:bold;color:black;"
-	STATUS_COMPLETE string = "background:#8BC34A;font-weight:bold;color:black;"
-	STATUS_CANCEL   string = "background:#E91E63;font-weight:bold;color:white;"
+	DB_tbl_trx_log           string = "tbl_trx_log"
 )
 
 const Sourcechar string = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()-_=+[]{};:,.<>?/`

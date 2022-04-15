@@ -75,6 +75,11 @@ func Save_adminrule(admin, idadmin, rule, sData string) (helpers.Response, error
 			if flag_insert {
 				msg = "Succes"
 				log.Println(msg_insert)
+
+				notelog := ""
+				notelog += "NEW RULE <br>"
+				notelog += "RULE : " + idadmin
+				Insert_log("SUPERADMIN", "", admin, "ADMIN RULE", "INSERT", notelog)
 			} else {
 				log.Println(msg_insert)
 			}
@@ -95,6 +100,11 @@ func Save_adminrule(admin, idadmin, rule, sData string) (helpers.Response, error
 		if flag_update {
 			msg = "Succes"
 			log.Println(msg_update)
+
+			notelog := ""
+			notelog += "UPDATE RULE <br>"
+			notelog += "RULE : " + idadmin
+			Insert_log("SUPERADMIN", "", admin, "ADMIN RULE", "UPDATE", notelog)
 		} else {
 			log.Println(msg_update)
 		}

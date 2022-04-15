@@ -7,17 +7,16 @@ import (
 	"github.com/buger/jsonparser"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/nikitamirzani323/wl_apisuper/entities"
 	"github.com/nikitamirzani323/wl_apisuper/helpers"
 	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Fieldcurr_home_redis = "LISTCURR_SUPER_WL"
+const Fieldlog_home_redis = "LISTLOG_SUPER_WL"
 
-func Currhome(c *fiber.Ctx) error {
+func Loghome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
-	client := new(entities.Controller_curr)
+	client := new(entities.Controller_log)
 	validate := validator.New()
 	if err := c.BodyParser(client); err != nil {
 		c.Status(fiber.StatusBadRequest)
@@ -46,7 +45,7 @@ func Currhome(c *fiber.Ctx) error {
 	var obj entities.Model_curr
 	var arraobj []entities.Model_curr
 	render_page := time.Now()
-	resultredis, flag := helpers.GetRedis(Fieldcurr_home_redis)
+	resultredis, flag := helpers.GetRedis(Fieldlog_home_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
@@ -63,7 +62,7 @@ func Currhome(c *fiber.Ctx) error {
 	})
 
 	if !flag {
-		result, err := models.Fetch_currHome()
+		result, err := models.Fetch_logHome(client.Idcompany)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -72,11 +71,11 @@ func Currhome(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldcurr_home_redis, result, 30*time.Minute)
-		log.Println("CURR MYSQL")
+		helpers.SetRedis(Fieldlog_home_redis, result, 30*time.Minute)
+		log.Println("LOG MYSQL")
 		return c.JSON(result)
 	} else {
-		log.Println("CURR CACHE")
+		log.Println("LOG CACHE")
 		return c.JSON(fiber.Map{
 			"status":  fiber.StatusOK,
 			"message": "Success",
@@ -84,60 +83,4 @@ func Currhome(c *fiber.Ctx) error {
 			"time":    time.Since(render_page).String(),
 		})
 	}
-}
-func CurrSave(c *fiber.Ctx) error {
-	var errors []*helpers.ErrorResponse
-	client := new(entities.Controller_currsave)
-	validate := validator.New()
-	if err := c.BodyParser(client); err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": err.Error(),
-			"record":  nil,
-		})
-	}
-
-	err := validate.Struct(client)
-	if err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			var element helpers.ErrorResponse
-			element.Field = err.StructField()
-			element.Tag = err.Tag()
-			errors = append(errors, &element)
-		}
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": "validation",
-			"record":  errors,
-		})
-	}
-	user := c.Locals("jwt").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	name := claims["name"].(string)
-	temp_decp := helpers.Decryption(name)
-	client_admin, _ := helpers.Parsing_Decry(temp_decp, "==")
-
-	result, err := models.Save_currHome(
-		client_admin,
-		client.Idcurr, client.Name, client.Sdata)
-	if err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": err.Error(),
-			"record":  nil,
-		})
-	}
-
-	_deleteredis_curr()
-	return c.JSON(result)
-}
-func _deleteredis_curr() {
-	val_super := helpers.DeleteRedis(Fieldcurr_home_redis)
-	log.Printf("REDIS DELETE SUPER CURR : %d", val_super)
-
-	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
-	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
 }
