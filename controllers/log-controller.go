@@ -42,27 +42,31 @@ func Loghome(c *fiber.Ctx) error {
 		})
 	}
 
-	var obj entities.Model_curr
-	var arraobj []entities.Model_curr
+	var obj entities.Model_log
+	var arraobj []entities.Model_log
 	render_page := time.Now()
 	resultredis, flag := helpers.GetRedis(Fieldlog_home_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		curr_idcur, _ := jsonparser.GetString(value, "curr_idcur")
-		curr_nama, _ := jsonparser.GetString(value, "curr_nama")
-		curr_create, _ := jsonparser.GetString(value, "curr_create")
-		curr_update, _ := jsonparser.GetString(value, "curr_update")
+		log_id, _ := jsonparser.GetInt(value, "log_id")
+		log_datetime, _ := jsonparser.GetString(value, "log_datetime")
+		log_user, _ := jsonparser.GetString(value, "log_user")
+		log_page, _ := jsonparser.GetString(value, "log_page")
+		log_tipe, _ := jsonparser.GetString(value, "log_tipe")
+		log_note, _ := jsonparser.GetString(value, "log_note")
 
-		obj.Curr_idcurr = curr_idcur
-		obj.Curr_nama = curr_nama
-		obj.Curr_create = curr_create
-		obj.Curr_update = curr_update
+		obj.Log_id = int(log_id)
+		obj.Log_datetime = log_datetime
+		obj.Log_user = log_user
+		obj.Log_page = log_page
+		obj.Log_tipe = log_tipe
+		obj.Log_note = log_note
 		arraobj = append(arraobj, obj)
 	})
 
 	if !flag {
-		result, err := models.Fetch_logHome(client.Idcompany)
+		result, err := models.Fetch_logHome(client.Typeuser)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{

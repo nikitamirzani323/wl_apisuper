@@ -21,7 +21,7 @@ func Fetch_logHome(typeuser string) (helpers.Response, error) {
 	start := time.Now()
 
 	sql_select := `SELECT 
-			idlog, datetimelog, userlog, pagelog,  
+			idlog, to_char(COALESCE(datetimelog,now()), 'YYYY-MM-DD HH24:MI:SS'), userlog, pagelog,  
 			tipelog, notelog    
 			FROM ` + configs.DB_tbl_trx_log + ` 
 			WHERE typeuser=$1 LIMIT 300 
