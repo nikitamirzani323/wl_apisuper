@@ -24,7 +24,7 @@ func Fetch_logHome(typeuser string) (helpers.Response, error) {
 			idlog, datetimelog, userlog, pagelog,  
 			tipelog, notelog    
 			FROM ` + configs.DB_tbl_trx_log + ` 
-			WHERE typeuser=$1 
+			WHERE typeuser=$1 LIMIT 300 
 		`
 
 	row, err := con.QueryContext(ctx, sql_select, typeuser)
