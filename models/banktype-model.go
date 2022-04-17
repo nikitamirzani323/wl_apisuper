@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"time"
 
@@ -13,10 +14,10 @@ import (
 	"github.com/nleeper/goment"
 )
 
-func Fetch_banktypeHome() (helpers.Response, error) {
+func Fetch_banktypeHome() (helpers.ResponseBanktype, error) {
 	var obj entities.Model_banktype
 	var arraobj []entities.Model_banktype
-	var res helpers.Response
+	var res helpers.ResponseBanktype
 	msg := "Data Not Found"
 	con := db.CreateCon()
 	ctx := context.Background()
@@ -53,6 +54,7 @@ func Fetch_banktypeHome() (helpers.Response, error) {
 		}
 		obj.Banktype_id = idbanktype_db
 		obj.Banktype_idcatebank = idcatebank_db
+		obj.Banktype_nmcatebank = _categorybank("nmcatebank", idcatebank_db)
 		obj.Banktype_name = nmbanktype_db
 		obj.Banktype_img = imgbanktype_db
 		obj.Banktype_status = statusbanktype_db
@@ -63,9 +65,35 @@ func Fetch_banktypeHome() (helpers.Response, error) {
 	}
 	defer row.Close()
 
+	var objCatebank entities.Model_banktypecatebank
+	var arraobjCatebank []entities.Model_banktypecatebank
+	sql_listcatebank := `SELECT 
+		idcatebank, nmcatebank  	
+		FROM ` + configs.DB_tbl_mst_catebank + ` 
+		WHERE statuscatebank = 'Y' 
+	`
+	row_listcatebank, err_listcatebank := con.QueryContext(ctx, sql_listcatebank)
+	helpers.ErrorCheck(err_listcatebank)
+	for row_listcatebank.Next() {
+		var (
+			idcatebank_db int
+			nmcatebank_db string
+		)
+
+		err = row_listcatebank.Scan(&idcatebank_db, &nmcatebank_db)
+
+		helpers.ErrorCheck(err)
+
+		objCatebank.Catebank_id = idcatebank_db
+		objCatebank.Catebank_name = nmcatebank_db
+		arraobjCatebank = append(arraobjCatebank, objCatebank)
+		msg = "Success"
+	}
+
 	res.Status = fiber.StatusOK
 	res.Message = msg
 	res.Record = arraobj
+	res.Listcatebank = arraobjCatebank
 	res.Time = time.Since(start).String()
 
 	return res, nil
@@ -78,6 +106,11 @@ func Save_banktypeHome(
 	tglnow, _ := goment.New()
 	render_page := time.Now()
 	flag := false
+	if status == "ACTIVE" {
+		status = "Y"
+	} else {
+		status = "N"
+	}
 	if sData == "New" {
 		sql_insert := `
 				insert into
@@ -143,4 +176,35 @@ func Save_banktypeHome(
 	res.Time = time.Since(render_page).String()
 
 	return res, nil
+}
+func _categorybank(tipe string, idcatebank int) string {
+	con := db.CreateCon()
+	ctx := context.Background()
+	flag := false
+	result := ""
+	nmcatebank := ""
+
+	sql_select := `SELECT
+		nmcatebank   
+		FROM ` + configs.DB_tbl_mst_catebank + `  
+		WHERE idcatebank = $1 
+	`
+	row := con.QueryRowContext(ctx, sql_select, idcatebank)
+	switch e := row.Scan(&nmcatebank); e {
+	case sql.ErrNoRows:
+		flag = false
+	case nil:
+		flag = true
+
+	default:
+		panic(e)
+	}
+	if flag {
+		switch tipe {
+		case "nmcatebank":
+			result = nmcatebank
+		}
+
+	}
+	return result
 }

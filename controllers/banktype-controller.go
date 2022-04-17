@@ -45,13 +45,17 @@ func Banktypehome(c *fiber.Ctx) error {
 
 	var obj entities.Model_banktype
 	var arraobj []entities.Model_banktype
+	var objcatebank entities.Model_banktypecatebank
+	var arraobjcatebank []entities.Model_banktypecatebank
 	render_page := time.Now()
 	resultredis, flag := helpers.GetRedis(Fieldbanktype_home_redis)
 	jsonredis := []byte(resultredis)
+	listcatebank_RD, _, _, _ := jsonparser.Get(jsonredis, "listcatebank")
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		banktype_id, _ := jsonparser.GetString(value, "banktype_id")
 		banktype_idcatebank, _ := jsonparser.GetInt(value, "banktype_idcatebank")
+		banktype_nmcatebank, _ := jsonparser.GetString(value, "banktype_nmcatebank")
 		banktype_name, _ := jsonparser.GetString(value, "banktype_name")
 		banktype_img, _ := jsonparser.GetString(value, "banktype_img")
 		banktype_status, _ := jsonparser.GetString(value, "banktype_status")
@@ -60,6 +64,7 @@ func Banktypehome(c *fiber.Ctx) error {
 
 		obj.Banktype_id = banktype_id
 		obj.Banktype_idcatebank = int(banktype_idcatebank)
+		obj.Banktype_nmcatebank = banktype_nmcatebank
 		obj.Banktype_name = banktype_name
 		obj.Banktype_img = banktype_img
 		obj.Banktype_status = banktype_status
@@ -67,7 +72,14 @@ func Banktypehome(c *fiber.Ctx) error {
 		obj.Banktype_update = banktype_update
 		arraobj = append(arraobj, obj)
 	})
+	jsonparser.ArrayEach(listcatebank_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		catebank_id, _ := jsonparser.GetInt(value, "catebank_id")
+		catebank_name, _ := jsonparser.GetString(value, "catebank_name")
 
+		objcatebank.Catebank_id = int(catebank_id)
+		objcatebank.Catebank_name = catebank_name
+		arraobjcatebank = append(arraobjcatebank, objcatebank)
+	})
 	if !flag {
 		result, err := models.Fetch_banktypeHome()
 		if err != nil {
@@ -84,10 +96,11 @@ func Banktypehome(c *fiber.Ctx) error {
 	} else {
 		log.Println("CATEBANK CACHE")
 		return c.JSON(fiber.Map{
-			"status":  fiber.StatusOK,
-			"message": "Success",
-			"record":  arraobj,
-			"time":    time.Since(render_page).String(),
+			"status":       fiber.StatusOK,
+			"message":      "Success",
+			"record":       arraobj,
+			"listcatebank": arraobjcatebank,
+			"time":         time.Since(render_page).String(),
 		})
 	}
 }

@@ -3,6 +3,7 @@ package entities
 type Model_banktype struct {
 	Banktype_id         string `json:"banktype_id"`
 	Banktype_idcatebank int    `json:"banktype_idcatebank"`
+	Banktype_nmcatebank string `json:"banktype_nmcatebank"`
 	Banktype_name       string `json:"banktype_name"`
 	Banktype_img        string `json:"banktype_img"`
 	Banktype_status     string `json:"banktype_status"`
@@ -11,6 +12,10 @@ type Model_banktype struct {
 }
 type Controller_banktype struct {
 	Master string `json:"master" validate:"required"`
+}
+type Model_banktypecatebank struct {
+	Catebank_id   int    `json:"catebank_id"`
+	Catebank_name string `json:"catebank_name"`
 }
 type Controller_banktypesave struct {
 	Sdata               string `json:"sdata" validate:"required"`
