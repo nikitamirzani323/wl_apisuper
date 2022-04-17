@@ -3,7 +3,6 @@ package models
 import (
 	"context"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -36,8 +35,8 @@ func Fetch_banktypeHome() (helpers.Response, error) {
 	helpers.ErrorCheck(err)
 	for row.Next() {
 		var (
-			idbanktype_db, idcatebank_db                                                       int
-			nmbanktype_db, imgbanktype_db, statusbanktype_db                                   string
+			idcatebank_db                                                                      int
+			idbanktype_db, nmbanktype_db, imgbanktype_db, statusbanktype_db                    string
 			createbanktype_db, createdatebanktype_db, updatebanktype_db, updatedatebanktype_db string
 		)
 
@@ -72,13 +71,13 @@ func Fetch_banktypeHome() (helpers.Response, error) {
 	return res, nil
 }
 func Save_banktypeHome(
-	admin, nmbanktype, imgbanktype,
-	status, sData string, idcatebank, idbanktype int) (helpers.Response, error) {
+	admin, idbanktype, nmbanktype, imgbanktype,
+	status, sData string, idcatebank int) (helpers.Response, error) {
 	var res helpers.Response
 	msg := "Failed"
 	tglnow, _ := goment.New()
 	render_page := time.Now()
-
+	flag := false
 	if sData == "New" {
 		sql_insert := `
 				insert into
@@ -91,12 +90,13 @@ func Save_banktypeHome(
 					
 				)
 			`
-		yearcounter := tglnow.Format("YYYY")
-		monthcounter := tglnow.Format("MM")
-		idcounter := Get_counter(configs.DB_tbl_mst_banktype + yearcounter + monthcounter)
-		idcounter_final := yearcounter + monthcounter + strconv.Itoa(idcounter)
+		flag = CheckDB(configs.DB_tbl_mst_banktype, "idbanktype", idbanktype)
+		if !flag {
+		} else {
+
+		}
 		flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_mst_banktype, "INSERT",
-			idcounter_final, idcatebank, nmbanktype, imgbanktype, status,
+			idbanktype, idcatebank, nmbanktype, imgbanktype, status,
 			admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"))
 
 		if flag_insert {

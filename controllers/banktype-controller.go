@@ -50,7 +50,7 @@ func Banktypehome(c *fiber.Ctx) error {
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		banktype_id, _ := jsonparser.GetInt(value, "banktype_id")
+		banktype_id, _ := jsonparser.GetString(value, "banktype_id")
 		banktype_idcatebank, _ := jsonparser.GetInt(value, "banktype_idcatebank")
 		banktype_name, _ := jsonparser.GetString(value, "banktype_name")
 		banktype_img, _ := jsonparser.GetString(value, "banktype_img")
@@ -58,7 +58,7 @@ func Banktypehome(c *fiber.Ctx) error {
 		banktype_create, _ := jsonparser.GetString(value, "banktype_create")
 		banktype_update, _ := jsonparser.GetString(value, "banktype_update")
 
-		obj.Banktype_id = int(banktype_id)
+		obj.Banktype_id = banktype_id
 		obj.Banktype_idcatebank = int(banktype_idcatebank)
 		obj.Banktype_name = banktype_name
 		obj.Banktype_img = banktype_img
@@ -127,7 +127,7 @@ func BanktypeSave(c *fiber.Ctx) error {
 
 	result, err := models.Save_banktypeHome(
 		client_admin,
-		client.Banktype_name, client.Banktype_img, client.Banktype_status, client.Sdata, client.Banktype_idcatebank, client.Banktype_id)
+		client.Banktype_id, client.Banktype_name, client.Banktype_img, client.Banktype_status, client.Sdata, client.Banktype_idcatebank)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{

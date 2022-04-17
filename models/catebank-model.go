@@ -76,7 +76,11 @@ func Save_catebankHome(
 	msg := "Failed"
 	tglnow, _ := goment.New()
 	render_page := time.Now()
-
+	if status == "ACTIVE" {
+		status = "Y"
+	} else {
+		status = "N"
+	}
 	if sData == "New" {
 		sql_insert := `
 				insert into
