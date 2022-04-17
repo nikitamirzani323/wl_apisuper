@@ -10,6 +10,7 @@ type Model_company struct {
 	Company_phoneowner  string `json:"company_phoneowner"`
 	Company_emailowner  string `json:"company_emailowner"`
 	Company_urlendpoint string `json:"company_urlendpoint"`
+	Company_totalagen   int    `json:"company_totalagen"`
 	Company_status      string `json:"company_status"`
 	Company_create      string `json:"company_create"`
 	Company_update      string `json:"company_update"`
@@ -25,6 +26,19 @@ type Model_companyadmin struct {
 	Companyadmin_lastipaddress string `json:"companyadmin_lastipaddress"`
 	Companyadmin_create        string `json:"companyadmin_create"`
 	Companyadmin_update        string `json:"companyadmin_update"`
+}
+type Model_companyagen struct {
+	Companyagen_idagen     string `json:"companyagen_idagen"`
+	Companyagen_start      string `json:"companyagen_start"`
+	Companyagen_end        string `json:"companyagen_end"`
+	Companyagen_idcurr     string `json:"companyagen_idcurr"`
+	Companyagen_nmagen     string `json:"companyagen_nmagen"`
+	Companyagen_ownername  string `json:"companyagen_ownername"`
+	Companyagen_ownerphone string `json:"companyagen_ownerphone"`
+	Companyagen_owneremail string `json:"companyagen_owneremail"`
+	Companyagen_status     string `json:"companyagen_status"`
+	Companyagen_create     string `json:"companyagen_create"`
+	Companyagen_update     string `json:"companyagen_update"`
 }
 type Model_compcurr struct {
 	Curr_idcurr string `json:"curr_idcurr"`

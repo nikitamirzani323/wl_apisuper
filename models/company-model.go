@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"time"
 
@@ -67,6 +68,7 @@ func Fetch_companyHome() (helpers.ResponseCompany, error) {
 		obj.Company_phoneowner = phoneowner_db
 		obj.Company_emailowner = emailowner_db
 		obj.Company_urlendpoint = companyurl_db
+		obj.Company_totalagen = _agentotal(idcompany_db)
 		obj.Company_status = statuscompany_db
 		obj.Company_create = create
 		obj.Company_update = update
@@ -347,4 +349,100 @@ func Save_companylistadmin(
 	res.Time = time.Since(render_page).String()
 
 	return res, nil
+}
+func Fetch_companyListAgen(idcompany string) (helpers.Response, error) {
+	var obj entities.Model_companyagen
+	var arraobj []entities.Model_companyagen
+	var res helpers.Response
+	msg := "Data Not Found"
+	con := db.CreateCon()
+	ctx := context.Background()
+	start := time.Now()
+
+	sql_select := `SELECT 
+			idagen , to_char(COALESCE(startjoinagen,now()), 'YYYY-MM-DD HH24:MI:SS'), to_char(COALESCE(endjoinagen,now()), 'YYYY-MM-DD HH24:MI:SS'), 
+			idcurr, nmagen, owneragen, owneragen_phone, owneragen_email, statusagen ,
+			createagen, to_char(COALESCE(createdateagen,now()), 'YYYY-MM-DD HH24:MI:SS') as createdateagen, 
+			updateagen, to_char(COALESCE(updatedateagen,now()), 'YYYY-MM-DD HH24:MI:SS') as updatedateagen 
+			FROM ` + configs.DB_tbl_mst_agen + ` 
+			WHERE idcompany = $1 
+			ORDER BY createagen DESC 
+		`
+
+	row, err := con.QueryContext(ctx, sql_select, idcompany)
+
+	helpers.ErrorCheck(err)
+	for row.Next() {
+		var (
+			idagen_db, startjoinagen_db, endjoinagen_db                                               string
+			idcurr_db, nmagen_db, owneragen_db, owneragen_phone_db, owneragen_email_db, statusagen_db string
+			createagen_db, createdateagen_db, updateagen_db, updatedateagen_db                        string
+		)
+
+		err = row.Scan(
+			&idagen_db, &startjoinagen_db, &endjoinagen_db,
+			&idcurr_db, &nmagen_db, &owneragen_db, &owneragen_phone_db, &owneragen_email_db, &statusagen_db,
+			&createagen_db, &createdateagen_db, &updateagen_db, &updatedateagen_db)
+
+		helpers.ErrorCheck(err)
+		if startjoinagen_db == "0000-00-00 00:00:00" {
+			startjoinagen_db = ""
+		}
+		if endjoinagen_db == "0000-00-00 00:00:00" {
+			endjoinagen_db = ""
+		}
+		create := createagen_db + ", " + createdateagen_db
+		update := ""
+		if updateagen_db != "" {
+			update = updateagen_db + ", " + updatedateagen_db
+		}
+		obj.Companyagen_idagen = idagen_db
+		obj.Companyagen_start = startjoinagen_db
+		obj.Companyagen_end = endjoinagen_db
+		obj.Companyagen_idcurr = idcurr_db
+		obj.Companyagen_nmagen = nmagen_db
+		obj.Companyagen_ownername = owneragen_db
+		obj.Companyagen_ownerphone = owneragen_phone_db
+		obj.Companyagen_owneremail = owneragen_email_db
+		obj.Companyagen_status = statusagen_db
+		obj.Companyagen_create = create
+		obj.Companyagen_update = update
+		arraobj = append(arraobj, obj)
+		msg = "Success"
+	}
+	defer row.Close()
+
+	res.Status = fiber.StatusOK
+	res.Message = msg
+	res.Record = arraobj
+	res.Time = time.Since(start).String()
+
+	return res, nil
+}
+func _agentotal(idcompany string) int {
+	con := db.CreateCon()
+	ctx := context.Background()
+	flag := false
+	result := 0
+	totalagen := 0
+
+	sql_select := `SELECT
+		count(idagen) as totalagen  
+		FROM ` + configs.DB_tbl_mst_agen + `  
+		WHERE idcompany = $1 
+	`
+	row := con.QueryRowContext(ctx, sql_select, idcompany)
+	switch e := row.Scan(&totalagen); e {
+	case sql.ErrNoRows:
+		flag = false
+	case nil:
+		flag = true
+
+	default:
+		panic(e)
+	}
+	if flag {
+		result = totalagen
+	}
+	return result
 }

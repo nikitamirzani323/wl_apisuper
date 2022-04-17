@@ -7,6 +7,7 @@ const (
 	DB_tbl_mst_currency      string = "tbl_mst_currency"
 	DB_tbl_mst_company       string = "tbl_mst_company"
 	DB_tbl_mst_company_admin string = "tbl_mst_company_admin"
+	DB_tbl_mst_agen          string = "tbl_mst_agen"
 	DB_tbl_trx_log           string = "tbl_trx_log"
 )
 

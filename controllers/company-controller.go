@@ -63,6 +63,7 @@ func Companyhome(c *fiber.Ctx) error {
 		company_phoneowner, _ := jsonparser.GetString(value, "company_phoneowner")
 		company_emailowner, _ := jsonparser.GetString(value, "company_emailowner")
 		company_urlendpoint, _ := jsonparser.GetString(value, "company_urlendpoint")
+		company_totalagen, _ := jsonparser.GetInt(value, "company_totalagen")
 		company_status, _ := jsonparser.GetString(value, "company_status")
 		company_create, _ := jsonparser.GetString(value, "company_create")
 		company_update, _ := jsonparser.GetString(value, "company_update")
@@ -76,6 +77,7 @@ func Companyhome(c *fiber.Ctx) error {
 		obj.Company_phoneowner = company_phoneowner
 		obj.Company_emailowner = company_emailowner
 		obj.Company_urlendpoint = company_urlendpoint
+		obj.Company_totalagen = int(company_totalagen)
 		obj.Company_status = company_status
 		obj.Company_create = company_create
 		obj.Company_update = company_update
@@ -97,17 +99,17 @@ func Companyhome(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldcompany_home_redis, result, 30*time.Minute)
+		helpers.SetRedis(Fieldcompany_home_redis, result, 30*time.Hour)
 		log.Println("COMPANY MYSQL")
 		return c.JSON(result)
 	} else {
 		log.Println("COMPANY CACHE")
 		return c.JSON(fiber.Map{
-			"status":       fiber.StatusOK,
-			"message":      "Success",
-			"record":       arraobj,
-			"listcurrency": arraobj_listcurr,
-			"time":         time.Since(render_page).String(),
+			"status":   fiber.StatusOK,
+			"message":  "Success",
+			"record":   arraobj,
+			"listcurr": arraobj_listcurr,
+			"time":     time.Since(render_page).String(),
 		})
 	}
 }
@@ -231,7 +233,7 @@ func CompanyListadmin(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldcompany_home_redis+"_LISTADMIN_"+strings.ToLower(client.Idcompany), result, 30*time.Minute)
+		helpers.SetRedis(Fieldcompany_home_redis+"_LISTADMIN_"+strings.ToLower(client.Idcompany), result, 30*time.Hour)
 		log.Println("COMPANY LISTADMIN MYSQL")
 		return c.JSON(result)
 	} else {
@@ -295,6 +297,90 @@ func CompanySavelistadmin(c *fiber.Ctx) error {
 	_deleteredis_company(client.Companyadmin_idcompany)
 	return c.JSON(result)
 }
+func CompanyListagen(c *fiber.Ctx) error {
+	var errors []*helpers.ErrorResponse
+	client := new(entities.Controller_companyadmin)
+	validate := validator.New()
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	err := validate.Struct(client)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			var element helpers.ErrorResponse
+			element.Field = err.StructField()
+			element.Tag = err.Tag()
+			errors = append(errors, &element)
+		}
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "validation",
+			"record":  errors,
+		})
+	}
+
+	var obj entities.Model_companyagen
+	var arraobj []entities.Model_companyagen
+	render_page := time.Now()
+	resultredis, flag := helpers.GetRedis(Fieldcompany_home_redis + "_LISTAGEN_" + strings.ToLower(client.Idcompany))
+	jsonredis := []byte(resultredis)
+	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
+	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		companyagen_idagen, _ := jsonparser.GetString(value, "companyagen_idagen")
+		companyagen_start, _ := jsonparser.GetString(value, "companyagen_start")
+		companyagen_end, _ := jsonparser.GetString(value, "companyagen_end")
+		companyagen_idcurr, _ := jsonparser.GetString(value, "companyagen_idcurr")
+		companyagen_nmagen, _ := jsonparser.GetString(value, "companyagen_nmagen")
+		companyagen_ownername, _ := jsonparser.GetString(value, "companyagen_ownername")
+		companyagen_ownerphone, _ := jsonparser.GetString(value, "companyagen_ownerphone")
+		companyagen_owneremail, _ := jsonparser.GetString(value, "companyagen_owneremail")
+		companyagen_status, _ := jsonparser.GetString(value, "companyagen_status")
+		companyagen_create, _ := jsonparser.GetString(value, "companyagen_create")
+		companyagen_update, _ := jsonparser.GetString(value, "companyadmin_update")
+
+		obj.Companyagen_idagen = companyagen_idagen
+		obj.Companyagen_start = companyagen_start
+		obj.Companyagen_end = companyagen_end
+		obj.Companyagen_idcurr = companyagen_idcurr
+		obj.Companyagen_nmagen = companyagen_nmagen
+		obj.Companyagen_ownername = companyagen_ownername
+		obj.Companyagen_ownerphone = companyagen_ownerphone
+		obj.Companyagen_owneremail = companyagen_owneremail
+		obj.Companyagen_status = companyagen_status
+		obj.Companyagen_create = companyagen_create
+		obj.Companyagen_update = companyagen_update
+		arraobj = append(arraobj, obj)
+	})
+
+	if !flag {
+		result, err := models.Fetch_companyListAgen(client.Idcompany)
+		if err != nil {
+			c.Status(fiber.StatusBadRequest)
+			return c.JSON(fiber.Map{
+				"status":  fiber.StatusBadRequest,
+				"message": err.Error(),
+				"record":  nil,
+			})
+		}
+		helpers.SetRedis(Fieldcompany_home_redis+"_LISTAGEN_"+strings.ToLower(client.Idcompany), result, 30*time.Hour)
+		log.Println("COMPANY LISTAGEN MYSQL")
+		return c.JSON(result)
+	} else {
+		log.Println("COMPANY LISTAGEN CACHE")
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusOK,
+			"message": "Success",
+			"record":  arraobj,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
 func _deleteredis_company(idcompany string) {
 	val_super := helpers.DeleteRedis(Fieldcompany_home_redis)
 	log.Printf("REDIS DELETE SUPER COMPANY : %d", val_super)
@@ -305,6 +391,9 @@ func _deleteredis_company(idcompany string) {
 	if idcompany != "" {
 		val_companyadmin := helpers.DeleteRedis(Fieldcompany_home_redis + "_LISTADMIN_" + strings.ToLower(idcompany))
 		log.Printf("REDIS DELETE SUPER COMPANY LISTADMIN : %d", val_companyadmin)
+
+		val_companyagen := helpers.DeleteRedis(Fieldcompany_home_redis + "_LISTAGEN_" + strings.ToLower(idcompany))
+		log.Printf("REDIS DELETE SUPER COMPANY LISTAGEN : %d", val_companyagen)
 	}
 
 }
