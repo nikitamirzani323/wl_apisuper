@@ -13,11 +13,11 @@ import (
 	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Fieldcatebank_home_redis = "LISTCATEBANK_SUPER_WL"
+const Fieldbanktype_home_redis = "LISTBANKTYPE_SUPER_WL"
 
-func Catebankhome(c *fiber.Ctx) error {
+func Banktypehome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
-	client := new(entities.Controller_catebank)
+	client := new(entities.Controller_banktype)
 	validate := validator.New()
 	if err := c.BodyParser(client); err != nil {
 		c.Status(fiber.StatusBadRequest)
@@ -43,29 +43,33 @@ func Catebankhome(c *fiber.Ctx) error {
 		})
 	}
 
-	var obj entities.Model_catebank
-	var arraobj []entities.Model_catebank
+	var obj entities.Model_banktype
+	var arraobj []entities.Model_banktype
 	render_page := time.Now()
-	resultredis, flag := helpers.GetRedis(Fieldcatebank_home_redis)
+	resultredis, flag := helpers.GetRedis(Fieldbanktype_home_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		catebank_id, _ := jsonparser.GetInt(value, "catebank_id")
-		catebank_name, _ := jsonparser.GetString(value, "catebank_name")
-		catebank_status, _ := jsonparser.GetString(value, "catebank_status")
-		catebank_create, _ := jsonparser.GetString(value, "catebank_create")
-		catebank_update, _ := jsonparser.GetString(value, "catebank_update")
+		banktype_id, _ := jsonparser.GetInt(value, "banktype_id")
+		banktype_idcatebank, _ := jsonparser.GetInt(value, "banktype_idcatebank")
+		banktype_name, _ := jsonparser.GetString(value, "banktype_name")
+		banktype_img, _ := jsonparser.GetString(value, "banktype_img")
+		banktype_status, _ := jsonparser.GetString(value, "banktype_status")
+		banktype_create, _ := jsonparser.GetString(value, "banktype_create")
+		banktype_update, _ := jsonparser.GetString(value, "banktype_update")
 
-		obj.Catebank_id = int(catebank_id)
-		obj.Catebank_name = catebank_name
-		obj.Catebank_status = catebank_status
-		obj.Catebank_create = catebank_create
-		obj.Catebank_update = catebank_update
+		obj.Banktype_id = int(banktype_id)
+		obj.Banktype_idcatebank = int(banktype_idcatebank)
+		obj.Banktype_name = banktype_name
+		obj.Banktype_img = banktype_img
+		obj.Banktype_status = banktype_status
+		obj.Banktype_create = banktype_create
+		obj.Banktype_update = banktype_update
 		arraobj = append(arraobj, obj)
 	})
 
 	if !flag {
-		result, err := models.Fetch_catebankHome()
+		result, err := models.Fetch_banktypeHome()
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -74,7 +78,7 @@ func Catebankhome(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldcatebank_home_redis, result, 30*time.Hour)
+		helpers.SetRedis(Fieldbanktype_home_redis, result, 30*time.Hour)
 		log.Println("CATEBANK MYSQL")
 		return c.JSON(result)
 	} else {
@@ -87,9 +91,9 @@ func Catebankhome(c *fiber.Ctx) error {
 		})
 	}
 }
-func CatebankSave(c *fiber.Ctx) error {
+func BanktypeSave(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
-	client := new(entities.Controller_catebanksave)
+	client := new(entities.Controller_banktypesave)
 	validate := validator.New()
 	if err := c.BodyParser(client); err != nil {
 		c.Status(fiber.StatusBadRequest)
@@ -121,9 +125,9 @@ func CatebankSave(c *fiber.Ctx) error {
 	temp_decp := helpers.Decryption(name)
 	client_admin, _ := helpers.Parsing_Decry(temp_decp, "==")
 
-	result, err := models.Save_catebankHome(
+	result, err := models.Save_banktypeHome(
 		client_admin,
-		client.Catebank_name, client.Catebank_status, client.Sdata, client.Catebank_id)
+		client.Banktype_name, client.Banktype_img, client.Banktype_status, client.Sdata, client.Banktype_idcatebank, client.Banktype_id)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -133,12 +137,12 @@ func CatebankSave(c *fiber.Ctx) error {
 		})
 	}
 
-	_deleteredis_catebank()
+	_deleteredis_banktype()
 	return c.JSON(result)
 }
-func _deleteredis_catebank() {
-	val_super := helpers.DeleteRedis(Fieldcatebank_home_redis)
-	log.Printf("REDIS DELETE SUPER CATEBANK : %d", val_super)
+func _deleteredis_banktype() {
+	val_super := helpers.DeleteRedis(Fieldbanktype_home_redis)
+	log.Printf("REDIS DELETE SUPER BANKTYPE : %d", val_super)
 
 	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
 	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
