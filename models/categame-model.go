@@ -23,11 +23,11 @@ func Fetch_categameHome() (helpers.Response, error) {
 	start := time.Now()
 
 	sql_select := `SELECT 
-			idcategame , nmcategame, statuscategame, 
+			idcategame , nmcategame, displaycategame, statuscategame, 
 			createcategame, to_char(COALESCE(createdatecategame,now()), 'YYYY-MM-DD HH24:MI:SS') as createdatecategame, 
 			updatecategame, to_char(COALESCE(updatedatecategame,now()), 'YYYY-MM-DD HH24:MI:SS') as updatedatecategame 
 			FROM ` + configs.DB_tbl_mst_categame + ` 
-			ORDER BY createdatecategame DESC 
+			ORDER BY displaycategame ASC  
 		`
 
 	row, err := con.QueryContext(ctx, sql_select)
@@ -35,12 +35,13 @@ func Fetch_categameHome() (helpers.Response, error) {
 	helpers.ErrorCheck(err)
 	for row.Next() {
 		var (
+			displaycategame_db                                                                 int
 			idcategame_db, nmcategame_db, statuscategame_db                                    string
 			createcategame_db, createdatecategame_db, updatecategame_db, updatedatecategame_db string
 		)
 
 		err = row.Scan(
-			&idcategame_db, &nmcategame_db, &statuscategame_db,
+			&idcategame_db, &nmcategame_db, &displaycategame_db, &statuscategame_db,
 			&createcategame_db, &createdatecategame_db, &updatecategame_db, &updatedatecategame_db)
 
 		helpers.ErrorCheck(err)
@@ -52,6 +53,7 @@ func Fetch_categameHome() (helpers.Response, error) {
 		}
 		obj.Categame_id = idcategame_db
 		obj.Categame_name = nmcategame_db
+		obj.Categame_display = displaycategame_db
 		obj.Categame_status = statuscategame_db
 		obj.Categame_create = create
 		obj.Categame_update = update

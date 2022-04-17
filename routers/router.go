@@ -39,6 +39,8 @@ func Init() *fiber.App {
 	api.Post("savebanktype", controllers.BanktypeSave)
 	api.Post("categorygame", controllers.Categamehome)
 	api.Post("savecategorygame", controllers.CategameSave)
+	api.Post("providergame", controllers.Providergamehome)
+	api.Post("saveprovidergame", controllers.ProvidergameSave)
 
 	api.Post("company", controllers.Companyhome)
 	api.Post("savecompany", controllers.CompanySave)
