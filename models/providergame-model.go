@@ -56,7 +56,7 @@ func Fetch_providergameHome() (helpers.Response, error) {
 		obj.Providergame_email = emailprovidergame_db
 		obj.Providergame_note = noteprovidergame_db
 		obj.Providergame_status = statusprovidergame_db
-		obj.Providergame_status = create
+		obj.Providergame_create = create
 		obj.Providergame_update = update
 		arraobj = append(arraobj, obj)
 		msg = "Success"
