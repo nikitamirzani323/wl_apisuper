@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"strconv"
 	"time"
@@ -55,6 +56,8 @@ func Fetch_gameHome() (helpers.Responsegame, error) {
 		obj.Game_id = idgame_db
 		obj.Game_idcategame = idcategame_db
 		obj.Game_idprovidergame = idprovidergame_db
+		obj.Game_nmcategame = _categorygame("nmcategame", idcategame_db)
+		obj.Game_nmprovidergame = _providergame("nmprovidergame", idprovidergame_db)
 		obj.Game_name = nmgame_db
 		obj.Game_imgcover = imgcovergame_db
 		obj.Game_imgthumb = imgthumbgame_db
@@ -203,4 +206,66 @@ func Save_gameHome(
 	res.Time = time.Since(render_page).String()
 
 	return res, nil
+}
+func _categorygame(tipe, idcategame string) string {
+	con := db.CreateCon()
+	ctx := context.Background()
+	flag := false
+	result := ""
+	nmcategame := ""
+
+	sql_select := `SELECT
+		nmcategame   
+		FROM ` + configs.DB_tbl_mst_categame + `  
+		WHERE idcategame = $1 
+	`
+	row := con.QueryRowContext(ctx, sql_select, idcategame)
+	switch e := row.Scan(&nmcategame); e {
+	case sql.ErrNoRows:
+		flag = false
+	case nil:
+		flag = true
+
+	default:
+		panic(e)
+	}
+	if flag {
+		switch tipe {
+		case "nmcategame":
+			result = nmcategame
+		}
+
+	}
+	return result
+}
+func _providergame(tipe, idprovidergame string) string {
+	con := db.CreateCon()
+	ctx := context.Background()
+	flag := false
+	result := ""
+	nmprovidergame := ""
+
+	sql_select := `SELECT
+		nmprovidergame   
+		FROM ` + configs.DB_tbl_mst_providergame + `  
+		WHERE idprovidergame = $1 
+	`
+	row := con.QueryRowContext(ctx, sql_select, idprovidergame)
+	switch e := row.Scan(&nmprovidergame); e {
+	case sql.ErrNoRows:
+		flag = false
+	case nil:
+		flag = true
+
+	default:
+		panic(e)
+	}
+	if flag {
+		switch tipe {
+		case "nmprovidergame":
+			result = nmprovidergame
+		}
+
+	}
+	return result
 }

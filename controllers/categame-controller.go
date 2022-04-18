@@ -142,6 +142,9 @@ func _deleteredis_categame() {
 	val_super := helpers.DeleteRedis(Fieldcategame_home_redis)
 	log.Printf("REDIS DELETE SUPER CATEGAME : %d", val_super)
 
+	val_super_game := helpers.DeleteRedis(Fieldgame_home_redis)
+	log.Printf("REDIS DELETE SUPER GAME : %d", val_super_game)
+
 	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
 	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
 }

@@ -59,6 +59,8 @@ func Gamehome(c *fiber.Ctx) error {
 		game_id, _ := jsonparser.GetInt(value, "game_id")
 		game_idcategame, _ := jsonparser.GetString(value, "game_idcategame")
 		game_idprovidergame, _ := jsonparser.GetString(value, "game_idprovidergame")
+		game_nmcategame, _ := jsonparser.GetString(value, "game_nmcategame")
+		game_nmprovidergame, _ := jsonparser.GetString(value, "game_nmprovidergame")
 		game_name, _ := jsonparser.GetString(value, "game_name")
 		game_imgcover, _ := jsonparser.GetString(value, "game_imgcover")
 		game_imgthumb, _ := jsonparser.GetString(value, "game_imgthumb")
@@ -70,6 +72,8 @@ func Gamehome(c *fiber.Ctx) error {
 		obj.Game_id = int(game_id)
 		obj.Game_idcategame = game_idcategame
 		obj.Game_idprovidergame = game_idprovidergame
+		obj.Game_nmcategame = game_nmcategame
+		obj.Game_nmprovidergame = game_nmprovidergame
 		obj.Game_name = game_name
 		obj.Game_imgcover = game_imgcover
 		obj.Game_imgthumb = game_imgthumb

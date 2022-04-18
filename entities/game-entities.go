@@ -4,6 +4,8 @@ type Model_game struct {
 	Game_id             int    `json:"game_id"`
 	Game_idcategame     string `json:"game_idcategame"`
 	Game_idprovidergame string `json:"game_idprovidergame"`
+	Game_nmcategame     string `json:"game_nmcategame"`
+	Game_nmprovidergame string `json:"game_nmprovidergame"`
 	Game_name           string `json:"game_name"`
 	Game_imgcover       string `json:"game_imgcover"`
 	Game_imgthumb       string `json:"game_imgthumb"`
