@@ -13,6 +13,12 @@ import (
 func main() {
 	db.Init()
 	app := routers.Init()
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	log.Printf("Hostname: %s", hostname)
 	go func() {
 		port := os.Getenv("PORT")
 		if port == "" {
