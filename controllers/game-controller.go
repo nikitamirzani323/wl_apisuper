@@ -167,7 +167,7 @@ func GameSave(c *fiber.Ctx) error {
 		})
 	}
 
-	_deleteredis_providergame()
+	_deleteredis_game()
 	return c.JSON(result)
 }
 func _deleteredis_game() {
