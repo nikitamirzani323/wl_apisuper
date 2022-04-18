@@ -1,6 +1,9 @@
 package routers
 
 import (
+	"log"
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -23,6 +26,26 @@ func Init() *fiber.App {
 	app.Use(recover.New())
 	app.Use(compress.New())
 	app.Use(cors.New())
+	app.Get("/check", func(c *fiber.Ctx) error {
+		hostname, err := os.Hostname()
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
+		return c.JSON(fiber.Map{
+			"status":      fiber.StatusOK,
+			"message":     "Success",
+			"record":      "data",
+			"BASEURL":     c.BaseURL(),
+			"HOSTNAME":    hostname,
+			"IP":          c.IP(),
+			"IPS":         c.IPs(),
+			"OriginalURL": c.OriginalURL(),
+			"Path":        c.Path(),
+			"Protocol":    c.Protocol(),
+			"Subdomain":   c.Subdomains(),
+		})
+	})
 	app.Get("/dashboard", monitor.New())
 	app.Post("/api/login", controllers.CheckLogin)
 	api := app.Group("/api/", middleware.JWTProtected())

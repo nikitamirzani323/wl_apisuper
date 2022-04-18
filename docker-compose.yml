@@ -3,6 +3,7 @@ version: '3.9'
 services:
   apisuper:
     # container_name: wl_api_super
+    image: wl_api_super:0.0.2
     build: .
     # ports:
       # - 1011:1011
