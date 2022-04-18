@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -71,7 +72,7 @@ func Fetch_categameHome() (helpers.Response, error) {
 }
 func Save_categameHome(
 	admin, idcategame, nmcategame,
-	status, sData string) (helpers.Response, error) {
+	status, sData string, display int) (helpers.Response, error) {
 	var res helpers.Response
 	msg := "Failed"
 	tglnow, _ := goment.New()
@@ -88,16 +89,16 @@ func Save_categameHome(
 			sql_insert := `
 				insert into
 				` + configs.DB_tbl_mst_categame + ` (
-					idcategame , nmcategame, statuscategame, 
+					idcategame , nmcategame, displaycategame, statuscategame, 
 					createcategame, createdatecategame
 				) values (
-					$1, $2, $3,   
-					$4, $5 
+					$1, $2, $3, $4,   
+					$5, $6 
 				)
 			`
 
 			flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_mst_categame, "INSERT",
-				idcategame, nmcategame, status,
+				idcategame, nmcategame, display, status,
 				admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"))
 
 			if flag_insert {
@@ -107,6 +108,7 @@ func Save_categameHome(
 				notelog := ""
 				notelog += "NEW CATEGORY GAME <br>"
 				notelog += "NAME : " + nmcategame + "<br>"
+				notelog += "DISPLAY : " + strconv.Itoa(display) + "<br>"
 				notelog += "STATUS : " + status
 				Insert_log("SUPERADMIN", "", admin, "CATEGORY GAME", "INSERT", notelog)
 			} else {
@@ -120,12 +122,12 @@ func Save_categameHome(
 		sql_update2 := `
 				UPDATE 
 				` + configs.DB_tbl_mst_categame + `   
-				SET nmcategame=$1, statuscategame=$2, 
-				updatecategame=$3, updatedatecategame=$4  
-				WHERE idcategame =$5 
+				SET nmcategame=$1, displaycategame=$2, statuscategame=$3, 
+				updatecategame=$4, updatedatecategame=$5   
+				WHERE idcategame=$6 
 			`
 		flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_categame, "UPDATE",
-			nmcategame, status,
+			nmcategame, display, status,
 			admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"), idcategame)
 
 		if flag_update {
@@ -135,6 +137,7 @@ func Save_categameHome(
 			notelog := ""
 			notelog += "UPDATE CATEGORY GAME <br>"
 			notelog += "NAME : " + nmcategame + "<br>"
+			notelog += "DISPLAY : " + strconv.Itoa(display) + "<br>"
 			notelog += "STATUS : " + status
 			Insert_log("SUPERADMIN", "", admin, "CATEGORY GAME", "UPDATE", notelog)
 		} else {

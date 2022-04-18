@@ -156,7 +156,7 @@ func GameSave(c *fiber.Ctx) error {
 
 	result, err := models.Save_gameHome(
 		client_admin,
-		client.Game_idcategame, client.Game_idcategame, client.Game_name, client.Game_imgcover,
+		client.Game_idcategame, client.Game_idprovidergame, client.Game_name, client.Game_imgcover,
 		client.Game_imgthumb, client.Game_endpointurl, client.Game_status, client.Sdata, client.Game_id)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)

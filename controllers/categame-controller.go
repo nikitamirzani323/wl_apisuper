@@ -125,7 +125,7 @@ func CategameSave(c *fiber.Ctx) error {
 
 	result, err := models.Save_categameHome(
 		client_admin,
-		client.Categame_id, client.Categame_name, client.Categame_status, client.Sdata)
+		client.Categame_id, client.Categame_name, client.Categame_status, client.Sdata, client.Categame_display)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
