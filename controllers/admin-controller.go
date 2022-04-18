@@ -160,6 +160,10 @@ func _deleteredis_admin() {
 	val_super := helpers.DeleteRedis(Fieldadmin_home_redis)
 	log.Printf("REDIS DELETE SUPER ADMIN : %d", val_super)
 
+	//MASTER
+	val_master_login := helpers.DeleteRedis("LISTLOGIN_MASTER_WL")
+	log.Printf("REDIS DELETE LISTLOGIN_MASTER_WL : %d", val_master_login)
+
 	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
 	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
 }
