@@ -12,7 +12,14 @@ type Model_game struct {
 	Game_create         string `json:"game_create"`
 	Game_update         string `json:"game_update"`
 }
-
+type Model_gamecate struct {
+	Categame_id   string `json:"categame_id"`
+	Categame_name string `json:"categame_name"`
+}
+type Model_gameprovider struct {
+	Providergame_id   string `json:"providergame_id"`
+	Providergame_name string `json:"providergame_name"`
+}
 type Controller_game struct {
 	Master string `json:"master" validate:"required"`
 }

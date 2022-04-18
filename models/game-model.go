@@ -14,10 +14,10 @@ import (
 	"github.com/nleeper/goment"
 )
 
-func Fetch_gameHome() (helpers.Response, error) {
+func Fetch_gameHome() (helpers.Responsegame, error) {
 	var obj entities.Model_game
 	var arraobj []entities.Model_game
-	var res helpers.Response
+	var res helpers.Responsegame
 	msg := "Data Not Found"
 	con := db.CreateCon()
 	ctx := context.Background()
@@ -67,9 +67,59 @@ func Fetch_gameHome() (helpers.Response, error) {
 	}
 	defer row.Close()
 
+	var objCategame entities.Model_gamecate
+	var arraobjCategame []entities.Model_gamecate
+	sql_listcategame := `SELECT 
+		idcategame, nmcategame 	
+		FROM ` + configs.DB_tbl_mst_categame + ` 
+		WHERE statuscategame = 'Y' 
+	`
+	row_listcategame, err_listcategame := con.QueryContext(ctx, sql_listcategame)
+	helpers.ErrorCheck(err_listcategame)
+	for row_listcategame.Next() {
+		var (
+			idcategame_db, nmcategame_db string
+		)
+
+		err = row_listcategame.Scan(&idcategame_db, &nmcategame_db)
+
+		helpers.ErrorCheck(err)
+
+		objCategame.Categame_id = idcategame_db
+		objCategame.Categame_name = nmcategame_db
+		arraobjCategame = append(arraobjCategame, objCategame)
+		msg = "Success"
+	}
+
+	var objgameprovider entities.Model_gameprovider
+	var arraobjgameprovider []entities.Model_gameprovider
+	sql_listgameprovider := `SELECT 
+		idprovidergame, nmprovidergame 	
+		FROM ` + configs.DB_tbl_mst_providergame + ` 
+		WHERE statusprovidergame = 'Y' 
+	`
+	row_listgameprovider, err_listgameprovider := con.QueryContext(ctx, sql_listgameprovider)
+	helpers.ErrorCheck(err_listgameprovider)
+	for row_listgameprovider.Next() {
+		var (
+			idprovidergame_db, nmprovidergame_db string
+		)
+
+		err = row_listgameprovider.Scan(&idprovidergame_db, &nmprovidergame_db)
+
+		helpers.ErrorCheck(err)
+
+		objgameprovider.Providergame_id = idprovidergame_db
+		objgameprovider.Providergame_name = nmprovidergame_db
+		arraobjgameprovider = append(arraobjgameprovider, objgameprovider)
+		msg = "Success"
+	}
+
 	res.Status = fiber.StatusOK
 	res.Message = msg
 	res.Record = arraobj
+	res.Listcategame = arraobjCategame
+	res.Listprovidergame = arraobjgameprovider
 	res.Time = time.Since(start).String()
 
 	return res, nil

@@ -45,9 +45,15 @@ func Gamehome(c *fiber.Ctx) error {
 
 	var obj entities.Model_game
 	var arraobj []entities.Model_game
+	var objcategame entities.Model_gamecate
+	var arraobjcategame []entities.Model_gamecate
+	var objprovidergame entities.Model_gameprovider
+	var arraobjprovidergame []entities.Model_gameprovider
 	render_page := time.Now()
 	resultredis, flag := helpers.GetRedis(Fieldgame_home_redis)
 	jsonredis := []byte(resultredis)
+	listcategorygame_RD, _, _, _ := jsonparser.Get(jsonredis, "listcategorygame")
+	listprovidergame_RD, _, _, _ := jsonparser.Get(jsonredis, "listprovidergame")
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		game_id, _ := jsonparser.GetInt(value, "game_id")
@@ -73,7 +79,22 @@ func Gamehome(c *fiber.Ctx) error {
 		obj.Game_update = game_update
 		arraobj = append(arraobj, obj)
 	})
+	jsonparser.ArrayEach(listcategorygame_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		categame_id, _ := jsonparser.GetString(value, "categame_id")
+		categame_name, _ := jsonparser.GetString(value, "categame_name")
 
+		objcategame.Categame_id = categame_id
+		objcategame.Categame_name = categame_name
+		arraobjcategame = append(arraobjcategame, objcategame)
+	})
+	jsonparser.ArrayEach(listprovidergame_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		providergame_id, _ := jsonparser.GetString(value, "providergame_id")
+		providergame_name, _ := jsonparser.GetString(value, "providergame_name")
+
+		objprovidergame.Providergame_id = providergame_id
+		objprovidergame.Providergame_name = providergame_name
+		arraobjprovidergame = append(arraobjprovidergame, objprovidergame)
+	})
 	if !flag {
 		result, err := models.Fetch_gameHome()
 		if err != nil {
@@ -90,10 +111,12 @@ func Gamehome(c *fiber.Ctx) error {
 	} else {
 		log.Println("GAME CACHE")
 		return c.JSON(fiber.Map{
-			"status":  fiber.StatusOK,
-			"message": "Success",
-			"record":  arraobj,
-			"time":    time.Since(render_page).String(),
+			"status":           fiber.StatusOK,
+			"message":          "Success",
+			"record":           arraobj,
+			"listcategorygame": arraobjcategame,
+			"listprovidergame": arraobjprovidergame,
+			"time":             time.Since(render_page).String(),
 		})
 	}
 }
