@@ -2,6 +2,8 @@ package models
 
 import (
 	"context"
+	"database/sql"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,7 +13,7 @@ import (
 	"github.com/nikitamirzani323/wl_apisuper/helpers"
 )
 
-func Fetch_logHome(typeuser string) (helpers.Response, error) {
+func Fetch_logHome(typeuser string, page int) (helpers.Response, error) {
 	var obj entities.Model_log
 	var arraobj []entities.Model_log
 	var res helpers.Response
@@ -20,13 +22,30 @@ func Fetch_logHome(typeuser string) (helpers.Response, error) {
 	ctx := context.Background()
 	start := time.Now()
 
-	sql_select := `SELECT 
-			idlog, to_char(COALESCE(datetimelog,now()), 'YYYY-MM-DD HH24:MI:SS'), userlog, pagelog,  
-			tipelog, notelog    
-			FROM ` + configs.DB_tbl_trx_log + ` 
-			WHERE typeuser=$1 
-			ORDER BY datetimelog DESC LIMIT 300 
-		`
+	totalrecord := 0
+	offset := page
+	sql_selectcount := ""
+	sql_selectcount += ""
+	sql_selectcount += "SELECT "
+	sql_selectcount += "COUNT(idlog) as totalidlog  "
+	sql_selectcount += "FROM " + configs.DB_tbl_trx_log + "  "
+	sql_selectcount += "WHERE typeuser=$1  "
+
+	row_selectcount := con.QueryRowContext(ctx, sql_selectcount)
+	switch e_selectcount := row_selectcount.Scan(&totalrecord); e_selectcount {
+	case sql.ErrNoRows:
+	case nil:
+	default:
+		helpers.ErrorCheck(e_selectcount)
+	}
+	sql_select := ""
+	sql_select += ""
+	sql_select += "SELECT "
+	sql_select += "idlog, to_char(COALESCE(datetimelog,now()), 'YYYY-MM-DD HH24:MI:SS'), userlog, pagelog,  "
+	sql_select += "tipelog, notelog    "
+	sql_select += "FROM " + configs.DB_tbl_trx_log + "  "
+	sql_select += "WHERE typeuser=$1   "
+	sql_select += "ORDER BY datetimelog DESC  OFFSET " + strconv.Itoa(offset) + " LIMIT " + strconv.Itoa(configs.PERPAGE)
 
 	row, err := con.QueryContext(ctx, sql_select, typeuser)
 

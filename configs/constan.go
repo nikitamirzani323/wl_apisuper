@@ -14,6 +14,7 @@ const (
 	DB_tbl_mst_company_admin string = "tbl_mst_company_admin"
 	DB_tbl_mst_agen          string = "tbl_mst_agen"
 	DB_tbl_trx_log           string = "tbl_trx_log"
+	PERPAGE                  int    = 100
 )
 
 const Sourcechar string = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()-_=+[]{};:,.<>?/`
